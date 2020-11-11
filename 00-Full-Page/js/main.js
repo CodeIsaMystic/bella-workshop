@@ -49,7 +49,11 @@ function initHeaderTilt() {
 }
 
 function moveImages(e) {
-    console.log(e);
+    //console.log(e);
+    const { offsetX, offsetY, target } = e;
+    const { clientWidth, clientHeight } = target;
+
+    console.log(offsetX, offsetY, clientWidth, clientHeight);
 }
 
 

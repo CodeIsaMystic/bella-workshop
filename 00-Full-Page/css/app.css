@@ -1,6 +1,6 @@
 :root {
   --text-color: white;
-  --text-dark-color: #202020;
+  --text-dark-color: #1D1D1D;
   --header-height: 100px;
   --burger-width: 40px;
   --font-headings: Georgia, serif;
@@ -140,7 +140,7 @@ body {
   transform: translateX(100%)
 }
 .has-scrolled .logo__img {
-  opacity: 1;
+  opacity: 1; 
 }
 .has-scrolled .logo__text {
   opacity: 0;
@@ -274,9 +274,9 @@ header h1 span {
   left: 14vw;
 }
 .hg__right .hg__image:nth-child(1) {
-  top: 15vh;
+  top: 18vh;
   left: auto;
-  right: 21vw;
+  right: 18vw;
   width: 24vw;
   padding-bottom: 21vw;
 }
@@ -292,6 +292,7 @@ header h1 span {
   right: 19vw;
   width: 16vw;
   padding-bottom: 20vw;
+  z-index: 1;
 }
 
 /* =Reveal Gallery */

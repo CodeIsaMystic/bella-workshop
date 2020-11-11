@@ -43,9 +43,7 @@ function initNavigation() {
 }
 
 function initHeaderTilt() {
-
     document.querySelector('header').addEventListener('mousemove', moveImages);
-
 }
 
 function moveImages(e) {
@@ -94,6 +92,49 @@ function moveImages(e) {
     })
 }
 
+function initHoverReveal() {
+    const sections = document.querySelectorAll('.rg__column');
+
+    sections.forEach(section => {
+        section.imageBlock = section.querySelector('.rg__image');
+        section.mask = section.querySelector('.rg__image--mask');
+
+        /** Reset initial position **/
+        gsap.set(section.imageBlock, { yPercent: -101 });
+        gsap.set(section.mask, { yPercent: 100 });
+
+        /** Add event listeners to each section   **/
+        section.addEventListener('mouseenter', createHoverReveal);
+        section.addEventListener('mouseleave', createHoverReveal);
+    })
+}
+
+function createHoverReveal(e) {
+    //console.log(e.type)
+
+    const { imageBlock, mask } = e.target;
+
+    let tl = gsap.timeline({
+        defaults: {
+            duration: 0.7,
+            ease: 'power4.out'
+        }
+    })
+
+
+    if (e.type === 'mouseenter') {
+
+        tl.to([mask, imageBlock], { yPercent: 0 })
+
+    } else if (e.type === 'mouseleave') {
+        tl
+            .to(mask, { yPercent: 100 })
+            .to(imageBlock, { yPercent: -101 }, 0)
+    }
+
+    return tl;
+}
+
 
 
 
@@ -102,6 +143,7 @@ function moveImages(e) {
 function init() {
     initNavigation();
     initHeaderTilt();
+    initHoverReveal();
 }
 
 

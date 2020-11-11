@@ -80,12 +80,18 @@ function moveImages(e) {
             duration: 1.2,
             x: -xPos * 20 * modifier(index),
             y: yPos * 30 * modifier(index),
-            rotationY: xPos * 25,
-            rotationX: yPos * 10,
+            rotationY: xPos * 10,
+            rotationX: yPos * 8,
             ease: 'power3.out'
         });
     });
 
+    /**  Move the Center Decor Circle   **/
+    gsap.to('.decor__circle', {
+        duration: 1.7, x: 80 * xPos,
+        y: 90 * yPos,
+        ease: 'power4.out'
+    })
 }
 
 

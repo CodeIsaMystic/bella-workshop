@@ -253,7 +253,33 @@ function initPinSteps() {
         //markers: true,
         pin: true
     });
+
+    const getVh = () => {
+        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+        return vh;
+    }
+
+    gsap.utils.toArray('.stage').forEach((stage, index) => {
+        const navLinks = gsap.utils.toArray('.fixed-nav li');
+
+        ScrollTrigger.create({
+            trigger: stage,
+            start: 'top center',
+            end: () => `+=${stage.clientHeight + getVh() / 10}`,
+            markers: true,
+            toggleClass: {
+                targets: navLinks[index],
+                className: 'is-active'
+            },
+        });
+    });
 }
+
+
+
+
+
 
 
 /**  Init Function  **/

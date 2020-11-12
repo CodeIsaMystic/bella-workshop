@@ -236,11 +236,23 @@ function initParallax() {
                 trigger: section,
                 start: 'top bottom',
                 scrub: true,
-                markers: true
+                // markers: true
             }
         });
     });
 
+}
+
+function initPinSteps() {
+
+    ScrollTrigger.create({
+        trigger: '.fixed-nav',
+        start: 'top center',
+        endTrigger: '#stage4',
+        end: 'center center',
+        //markers: true,
+        pin: true
+    });
 }
 
 
@@ -251,6 +263,7 @@ function init() {
     initHoverReveal();
     initPortfolioHover();
     initParallax();
+    initPinSteps();
 }
 
 /**  Window Event Load  **/

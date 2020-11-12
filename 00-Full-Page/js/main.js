@@ -1,5 +1,8 @@
 gsap.registerPlugin(ScrollTrigger);
 
+const sections = document.querySelectorAll('.rg__column');
+
+
 function initNavigation() {
 
     const mainNavLinks = gsap.utils.toArray('.main-nav a');
@@ -93,15 +96,21 @@ function moveImages(e) {
 }
 
 function initHoverReveal() {
-    const sections = document.querySelectorAll('.rg__column');
 
     sections.forEach(section => {
         section.imageBlock = section.querySelector('.rg__image');
+        section.image = section.querySelector('.rg__image img');
         section.mask = section.querySelector('.rg__image--mask');
+        section.text = section.querySelector('.rg__text');
+        section.textCopy = section.querySelector('.rg__text--copy');
+        section.textMask = section.querySelector('.rg__text--mask');
+        section.textP = section.querySelector('.rg__text--copy p');
+
 
         /** Reset initial position **/
-        gsap.set(section.imageBlock, { yPercent: -101 });
-        gsap.set(section.mask, { yPercent: 100 });
+        gsap.set([section.imageBlock, section.textMask], { yPercent: -101 });
+        gsap.set(section.image, { scale: 1.3 });
+        gsap.set([section.mask, section.textP], { yPercent: 100 });
 
         /** Add event listeners to each section   **/
         section.addEventListener('mouseenter', createHoverReveal);
@@ -109,27 +118,32 @@ function initHoverReveal() {
     })
 }
 
+function getTextHeight(textCopy) {
+    return textCopy.clientHeight;
+}
+
 function createHoverReveal(e) {
     //console.log(e.type)
-
-    const { imageBlock, mask } = e.target;
+    const { imageBlock, image, mask, text, textCopy, textMask, textP } = e.target;
 
     let tl = gsap.timeline({
         defaults: {
-            duration: 0.7,
+            duration: 1,
             ease: 'power4.out'
         }
     })
 
-
     if (e.type === 'mouseenter') {
-
-        tl.to([mask, imageBlock], { yPercent: 0 })
-
+        tl
+            .to([mask, imageBlock, textMask, textP], { yPercent: 0 })
+            .to(text, { y: () => -getTextHeight(textCopy) / 2 }, 0)
+            .to(image, { duration: 1.4, scale: 1 }, 0)
     } else if (e.type === 'mouseleave') {
         tl
-            .to(mask, { yPercent: 100 })
-            .to(imageBlock, { yPercent: -101 }, 0)
+            .to([mask, textP], { yPercent: 100 })
+            .to([imageBlock, textMask], { yPercent: -101 }, 0)
+            .to(text, { y: 0 }, 0)
+            .to(image, { scale: 1.3 }, 0)
     }
 
     return tl;
@@ -139,15 +153,55 @@ function createHoverReveal(e) {
 
 
 
-
+/**  Init Function  **/
 function init() {
     initNavigation();
     initHeaderTilt();
     initHoverReveal();
 }
 
-
+/**  Window Event Load  **/
 window.addEventListener('load', function () {
     init();
 });
 
+
+/** Define Breakpoints **/
+const mq = window.matchMedia("(min-width: 768px)");
+/**  Change add listener to the breakpoint  **/
+mq.addListener(handleWidthChange);
+
+handleWidthChange(mq)
+
+function resetProps(el) {
+    //console.log(el);
+    /** Kill all Tweens  **/
+    gsap.killTweensOf("*");
+    /**  Reset all props  **/
+    if (el.length) {
+        el.forEach(el => {
+            el && gsap.set(el, { clearProps: 'all' });
+        });
+    }
+}
+
+/** Media Query Change  **/
+function handleWidthChange(mq) {
+
+    /** if breakpoint match  **/
+    if (mq.matches) {
+        /** setup hover animation **/
+        initHoverReveal();
+    } else {
+        //console.log('We are on mobile!');
+        /**  Remove event listener for each section **/
+        sections.forEach(section => {
+            section.removeEventListener('mouseenter', createHoverReveal);
+            section.removeEventListener('mouseleave', createHoverReveal);
+
+            const { imageBlock, image, mask, text, textCopy, textMask, textP } = section;
+            resetProps([imageBlock, image, mask, text, textCopy, textMask, textP]);
+
+        });
+    }
+};

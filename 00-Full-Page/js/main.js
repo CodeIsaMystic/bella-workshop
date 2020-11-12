@@ -9,6 +9,8 @@ const smallImage = document.querySelector('.portfolio__image--s');
 const lInside = document.querySelector('.portfolio__image--l .image_inside');
 const sInside = document.querySelector('.portfolio__image--s .image_inside');
 
+let bodyScrollBar;
+
 
 function initNavigation() {
 
@@ -251,7 +253,8 @@ function initPinSteps() {
         endTrigger: '#stage4',
         end: 'center center',
         //markers: true,
-        pin: true
+        pin: true,
+        pinReparent: true
     });
 
     const getVh = () => {
@@ -285,7 +288,47 @@ function initPinSteps() {
     });
 }
 
+function initScrollTo() {
 
+    /** Find all links and animate  **/
+    gsap.utils.toArray('.fixed-nav a').forEach(link => {
+
+        const target = link.getAttribute('href');
+
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            bodyScrollBar.scrollIntoView(
+                document.querySelector(target), { damping: 0.07, offsetTop: 100 }
+            );
+
+        });
+    });
+
+}
+
+function initSmoothScrollbar() {
+    bodyScrollBar = Scrollbar.init(document.querySelector('#viewport'), { damping: 0.07 });
+
+    /** Remove the horizontal scrollbar of the library from the DOM **/
+    bodyScrollBar.track.xAxis.element.remove();
+
+    /** Add .scrollerProxy, for handle third part li issues 
+     * keep ScrollTrigger and sync with SmoothScrollbar **/
+    ScrollTrigger.scrollerProxy(document.body, {
+        scrollTop(value) {
+            if (arguments.length) {
+                bodyScrollBar.scrollTop = value; // setter
+            }
+            return bodyScrollBar.scrollTop;   // getter
+        }
+    });
+
+    /** When the SmoothScrollBar is updated, 
+     * tell ScrollTrigger to update too
+     */
+    bodyScrollBar.addListener(ScrollTrigger.update);
+
+}
 
 
 
@@ -293,18 +336,22 @@ function initPinSteps() {
 
 /**  Init Function  **/
 function init() {
+    initSmoothScrollbar();
     initNavigation();
     initHeaderTilt();
     initHoverReveal();
     initPortfolioHover();
     initParallax();
     initPinSteps();
+    initScrollTo();
 }
 
 /**  Window Event Load  **/
 window.addEventListener('load', function () {
     init();
 });
+
+
 
 
 /** Define Breakpoints **/

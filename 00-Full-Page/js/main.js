@@ -260,6 +260,13 @@ function initPinSteps() {
         return vh;
     }
 
+    const updateBodyColor = (color) => {
+        /** Quick example with gsap tween 
+        gsap.to('.fill-background', { backgroundColor: color, ease: 'none' });**/
+        /**  CSS Custom Property   **/
+        document.documentElement.style.setProperty('--bcg-fill-color', color);
+    }
+
     gsap.utils.toArray('.stage').forEach((stage, index) => {
         const navLinks = gsap.utils.toArray('.fixed-nav li');
 
@@ -267,11 +274,13 @@ function initPinSteps() {
             trigger: stage,
             start: 'top center',
             end: () => `+=${stage.clientHeight + getVh() / 10}`,
-            markers: true,
+            //markers: true,
             toggleClass: {
                 targets: navLinks[index],
                 className: 'is-active'
             },
+            onEnter: () => updateBodyColor(stage.dataset.color),
+            onEnterBack: () => updateBodyColor(stage.dataset.color)
         });
     });
 }

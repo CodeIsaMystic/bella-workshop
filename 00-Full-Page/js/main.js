@@ -2,6 +2,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 const sections = document.querySelectorAll('.rg__column');
 
+const allLinks = gsap.utils.toArray('.portfolio__categories a');
+const pageBackground = document.querySelector('.fill-background');
+const largeImage = document.querySelector('.portfolio__image--l');
+const smallImage = document.querySelector('.portfolio__image--s');
+const lInside = document.querySelector('.portfolio__image--l .image_inside');
+const sInside = document.querySelector('.portfolio__image--s .image_inside');
+
 
 function initNavigation() {
 
@@ -149,7 +156,72 @@ function createHoverReveal(e) {
     return tl;
 }
 
+function initPortfolioHover() {
+    allLinks.forEach(link => {
+        link.addEventListener('mouseenter', createPortfolioHover);
+        link.addEventListener('mouseleave', createPortfolioHover);
+        link.addEventListener('mousemove', createPortfolioMove);
+    })
+}
 
+function createPortfolioHover(e) {
+    /**  Change images to the right urls
+     *  Fade in images
+     *  All siblings to white and fade out
+     *  Active link to white
+     *  Update page background  **/
+    if (e.type === 'mouseenter') {
+        const { color, imagelarge, imagesmall } = e.target.dataset;
+        //console.log(color, imagelarge, imagesmall);
+        const allSiblings = allLinks.filter(item => item !== e.target);
+        const tl = gsap.timeline();
+        tl
+            .set(lInside, { backgroundImage: `url(${imagelarge})` })
+            .set(sInside, { backgroundImage: `url(${imagesmall})` })
+            .to([largeImage, smallImage], { duration: 1, autoAlpha: 1 })
+            .to(allSiblings, { color: '#fff', autoAlpha: 0.2 }, 0)
+            .to(e.target, { color: '#fff', autoAlpha: 1 }, 0)
+            .to(pageBackground, { backgroundColor: color, ease: 'none' }, 0)
+
+
+        /** Fade out images
+         *  All links back to back
+         *  Change background color back to default **/
+    } else if (e.type === 'mouseleave') {
+        const tl = gsap.timeline();
+        tl
+            .to([largeImage, smallImage], { autoAlpha: 0 })
+            .to(allLinks, { color: '#000000', autoAlpha: 1 }, 0)
+            .to(pageBackground, { backgroundColor: '#ACB7AE', ease: 'none' }, 0)
+
+
+    }
+}
+
+function createPortfolioMove(e) {
+
+    const { clientY } = e;
+
+    /** Move large image **/
+    gsap.to(largeImage, {
+        duration: 1.2,
+        y: getPortfolioOffset(clientY) / 3,
+        ease: 'Power3.inOut'
+    });
+
+    /** Move small image **/
+    gsap.to(smallImage, {
+        duration: 1.5,
+        y: getPortfolioOffset(clientY) / 2,
+        ease: 'Power3.inOut'
+    });
+}
+
+function getPortfolioOffset(clientY) {
+    const heightSection = (document.querySelector('.portfolio__categories').clientHeight) / 6;
+
+    return -(heightSection - clientY);
+}
 
 
 
@@ -158,6 +230,7 @@ function init() {
     initNavigation();
     initHeaderTilt();
     initHoverReveal();
+    initPortfolioHover();
 }
 
 /**  Window Event Load  **/

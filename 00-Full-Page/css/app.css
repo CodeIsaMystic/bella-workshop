@@ -515,7 +515,8 @@ section {
 }
 .portfolio__image--s {
   width: 15vw;
-  top: 25vh;
+  top: 11vh;
+  /*top: 25vh;*/
   left: 54vw;
   padding-bottom: 20vw;
 }

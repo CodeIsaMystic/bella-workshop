@@ -557,7 +557,7 @@ section {
 .blog__image img {
   opacity: 1;
   height: 120%;
-  top: -20%;
+  top: -30%;
 }
 .post__date {
   font-size: 1.6vw;
@@ -663,7 +663,7 @@ section {
 .stage__image img {
   opacity: 0.9;
   height: 120%;
-  top: -20%;
+  top: -30%;
 }
 .stage__text {
   color: var(--text-color);

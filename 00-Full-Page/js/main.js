@@ -223,6 +223,25 @@ function getPortfolioOffset(clientY) {
     return -(heightSection - clientY);
 }
 
+function initParallax() {
+    /**  Select all sections .with-parallax  **/
+    gsap.utils.toArray('.with-parallax').forEach(section => {
+        /** Get the Image  **/
+        const image = section.querySelector('img');
+        /** Create a Tween **/
+        gsap.to(image, {
+            yPercent: 30,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: section,
+                start: 'top bottom',
+                scrub: true,
+                markers: true
+            }
+        });
+    });
+
+}
 
 
 /**  Init Function  **/
@@ -231,6 +250,7 @@ function init() {
     initHeaderTilt();
     initHoverReveal();
     initPortfolioHover();
+    initParallax();
 }
 
 /**  Window Event Load  **/

@@ -2,17 +2,68 @@ gsap.registerPlugin(ScrollTrigger);
 
 const sections = document.querySelectorAll('.rg__column');
 
-const allLinks = gsap.utils.toArray('.portfolio__categories a');
 const pageBackground = document.querySelector('.fill-background');
 const largeImage = document.querySelector('.portfolio__image--l');
 const smallImage = document.querySelector('.portfolio__image--s');
 const lInside = document.querySelector('.portfolio__image--l .image_inside');
 const sInside = document.querySelector('.portfolio__image--s .image_inside');
-
 let bodyScrollBar;
+
+const allLinks = gsap.utils.toArray('.portfolio__categories a');
+
 
 const select = (e) => document.querySelector(e);
 const selectAll = (e) => document.querySelectorAll(e);
+
+
+const loader = select('.loader');
+const maskContent = select('.loader__mask--content');
+
+
+
+const firstLoadTl = gsap.timeline();
+
+firstLoadTl
+    .set(pageBackground, { backgroundColor: '#BC9296', ease: 'none' })
+    .set(loader, { autoAlpha: 1, ease: 'none' }, 0)
+    .to(maskContent, { delay: 2, autoAlpha: 0 });
+
+
+
+/** Set up variables  **/
+let loadedImageCount = 0, imageCount;
+const container = select('#main');
+
+/** Set up images loaded **/
+const imgLoad = imagesLoaded(container);
+imageCount = imgLoad.images.length;
+
+updateProgress(0);
+
+/** triggered after each item is loaded **/
+imgLoad.on('progress', function () {
+    /** Increase the num ber of loaded images **/
+    loadedImageCount++;
+    /**  Update Progress **/
+    updateProgress(loadedImageCount);
+});
+
+/**  updateProgress  */
+function updateProgress(value) {
+    gsap.to(firstLoadTl, { progress: value / imageCount, duration: 0.3, ease: 'power1.out' })
+}
+
+
+/**  Do whatever when all images are loaded **/
+imgLoad.on('done', function (instance) {
+    /**  Init our loader animation onComplete */
+    gsap.set(firstLoadTl, { autoAlpha: 0, onComplete: initLoader });
+});
+
+
+
+
+
 
 
 function initLoader() {
@@ -20,12 +71,11 @@ function initLoader() {
     const loaderInner = select('.loader .inner');
     const image = select('.loader__image img');
     const mask = select('.loader__image--mask');
-    const maskContent = select('.loader__mask--content');
     const line1 = select('.loader__title--mask:nth-child(1) span');
     const line2 = select('.loader__title--mask:nth-child(2) span');
     const lines = selectAll('.loader__title--mask');
-    const loader = select('.loader');
     const loaderContent = select('.loader__content');
+
 
     const tlLoaderIn = gsap.timeline({
         defaults: {
@@ -36,9 +86,9 @@ function initLoader() {
     });
 
     tlLoaderIn
-        //.set(maskContent, { duration: 1.2, autoAlpha: 0 })
+        .set(loaderContent, { autoAlpha: 1 })
         .fromTo(maskContent, { autoAlpha: 0 }, { duration: .8, autoAlpha: 1 })
-        .from(loaderInner, {
+        .to(loaderInner, {
             scaleY: 0,
             transformOrigin: 'bottom'
         }, 1.8)
@@ -59,7 +109,8 @@ function initLoader() {
     tlLoaderOut
         .to(lines, { yPercent: -500, stagger: 0.2 }, 0)
         .to([loader, loaderContent], { yPercent: -100 }, 0.2)
-        .from('#main', { y: 150 }, 0.2);
+        .from('#main', { y: 150 }, 0.2)
+        .to(pageBackground, { backgroundColor: '#a3abb1', ease: 'none' }, 0);
 
 
     const tlLoader = gsap.timeline();
@@ -159,9 +210,9 @@ function moveImages(e) {
             duration: 1.2,
             x: xPos * 20 * modifier(index),
             y: yPos * 30 * modifier(index),
-            rotationY: xPos * 25,
-            rotationX: yPos * 10,
-            ease: 'power3.out'
+            rotationY: xPos * 10,
+            rotationX: yPos * 8,
+            ease: 'power4.out'
         });
     });
 
@@ -169,11 +220,11 @@ function moveImages(e) {
     rightImages.forEach((image, index) => {
         gsap.to(image, {
             duration: 1.2,
-            x: -xPos * 20 * modifier(index),
+            x: xPos * 20 * modifier(index),
             y: yPos * 30 * modifier(index),
             rotationY: xPos * 10,
             rotationX: yPos * 8,
-            ease: 'power3.out'
+            ease: 'power4.out'
         });
     });
 
@@ -394,7 +445,7 @@ function initScrollTo() {
 
 /**  Init Function  **/
 function init() {
-    initLoader();
+    //initLoader();
     initSmoothScrollbar();
     initNavigation();
     initHeaderTilt();

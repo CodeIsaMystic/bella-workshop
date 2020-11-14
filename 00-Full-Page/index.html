@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Your Interior Our Focus - Bella </title>
+    <title>Your Interior, We Care - Bella Design</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -15,7 +15,7 @@
 
 </head>
 
-<body class="is-loading">
+<body class="is-loading" data-barba="wrapper">
 
     <div class="loader">
         <div class="loader__mask">
@@ -50,8 +50,8 @@
 
 
     <div class="logo">
-        <span class="logo__img"></span>
-        <span class="logo__text">Bella</span>
+        <a href="index.html" class="logo__img"></a>
+        <a href="index.html" class="logo__text">Bella</a>
     </div>
 
     <div class="burger">
@@ -63,17 +63,17 @@
     </div>
     <nav class="main-nav">
         <ul>
-            <li><a href="#0">Our Values</a></li>
-            <li><a href="#0">Portfolio</a></li>
-            <li><a href="#0">Blog</a></li>
-            <li><a href="#0">How We Work</a></li>
-            <li><a href="#0">Contact</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="#0">Projects</a></li>
+            <li><a href="#0">Lookbook</a></li>
+            <li><a href="#0">Journal</a></li>
+            <li><a href="index.html">Contact</a></li>
         </ul>
     </nav>
 
     <div id="viewport">
 
-        <main id="main">
+        <main id="main" data-barba="container">
 
             <header data-color="#ACB7AE">
                 <h1>
@@ -316,16 +316,22 @@
 
         </main> <!-- #main-container -->
 
+
         <!-- fill background between sections with margin - eg. portfolio  -->
         <aside class="fill-background"></aside>
 
     </div> <!-- #viewport -->
 
+
+    <!-- unpkg -->
+    <script src="https://unpkg.com/@barba/core"></script>
     <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+    <!-- gsap -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollToPlugin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+    <!-- main.js -->
     <script src="js/main.js" defer></script>
 
 </body>

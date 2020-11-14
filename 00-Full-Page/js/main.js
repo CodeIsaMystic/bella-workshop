@@ -1,5 +1,12 @@
+/**
+ * SCROLLTRIGGER INIT
+ */
 gsap.registerPlugin(ScrollTrigger);
 
+
+/**
+ * GLOBAL VARIABLES 
+ */
 const sections = document.querySelectorAll('.rg__column');
 
 const pageBackground = document.querySelector('.fill-background');
@@ -18,9 +25,12 @@ const selectAll = (e) => document.querySelectorAll(e);
 
 const loader = select('.loader');
 const maskContent = select('.loader__mask--content');
+const mask = select('.loader__mask')
 
 
-
+/**
+ * FIRST LOADING PAGE
+ */
 const firstLoadTl = gsap.timeline();
 
 firstLoadTl
@@ -29,7 +39,10 @@ firstLoadTl
     .to(maskContent, { delay: 2, autoAlpha: 0 });
 
 
-
+/**
+ * IMAGES LOADED 
+ * => imagesLoaded.js
+ */
 /** Set up variables  **/
 let loadedImageCount = 0, imageCount;
 const container = select('#main');
@@ -48,7 +61,7 @@ imgLoad.on('progress', function () {
     updateProgress(loadedImageCount);
 });
 
-/**  updateProgress  */
+/**  updateProgress  **/
 function updateProgress(value) {
     gsap.to(firstLoadTl, { progress: value / imageCount, duration: 0.3, ease: 'power1.out' })
 }
@@ -56,16 +69,16 @@ function updateProgress(value) {
 
 /**  Do whatever when all images are loaded **/
 imgLoad.on('done', function (instance) {
-    /**  Init our loader animation onComplete */
-    gsap.set(firstLoadTl, { autoAlpha: 0, onComplete: initLoader });
+    /**  Init our loader animation onComplete **/
+    gsap.set(firstLoadTl, { autoAlpha: 0, onComplete: initPageTransition });
 });
 
 
 
 
-
-
-
+/**
+ * INIT LOADER
+ */
 function initLoader() {
 
     const loaderInner = select('.loader .inner');
@@ -120,6 +133,83 @@ function initLoader() {
 
 }
 
+
+/**  PAGE TRANSITIONS 
+ * => Barba.js
+ */
+function PageTransitionIn({ container }) {
+    /** Timeline to stretch the loader over the whole screen **/
+    const tl = gsap.timeline({
+        defaults: {
+            duration: 1.1,
+            ease: 'power1.inOut'
+        }
+    });
+
+    tl
+        .set(mask, { backgroundColor: '#758A94' })
+        .fromTo(loader, { yPercent: -100 }, { yPercent: 0 })
+        .fromTo(maskContent, { autoAlpha: 0, yPercent: 80 }, { duration: 1.1, autoAlpha: 1, yPercent: -20 })
+        .to(container, { y: 150 }, 0)
+
+    return tl;
+}
+
+function PageTransitionOut({ container }) {
+    /** Timeline to move the loader way down **/
+    const tl = gsap.timeline({
+        defaults: {
+            duration: 1.1,
+            ease: 'power1.inOut'
+        }
+    });
+
+    tl
+        .to(loader, { yPercent: 100 })
+        .to(maskContent, { yPercent: -80 }, 0)
+        .from(container, { y: -150 }, 0)
+
+    return tl;
+}
+
+function initPageTransition() {
+    /** Prevent double click default  **/
+    barba.hooks.before(() => {
+        document.querySelector('html').classList.add('is-transitioning');
+    });
+    barba.hooks.after(() => {
+        document.querySelector('html').classList.remove('is-transitioning');
+    });
+
+    /** Scroll to the top of the page **/
+    barba.hooks.enter(() => {
+        window.scrollTo(0, 0);
+    })
+
+    /** Init barba **/
+    barba.init({
+        transitions: [{
+            once() {
+                /**  Do ... on the initial load  **/
+                initLoader();
+            },
+            async leave({ current }) {
+                /** Animate loading screen  **/
+                await PageTransitionIn(current);
+            },
+            enter({ next }) {
+                /** Animate loading screen away  **/
+                PageTransitionOut(next);
+            }
+        }]
+    })
+}
+
+
+
+/**  SMOOTH SCROLLING 
+ * => smoothScrollbar.js
+ */
 function initSmoothScrollbar() {
     bodyScrollBar = Scrollbar.init(document.querySelector('#viewport'), { damping: 0.07 });
 
@@ -144,6 +234,9 @@ function initSmoothScrollbar() {
 
 }
 
+/**
+ * NAVIGATION
+ */
 function initNavigation() {
 
     const mainNavLinks = gsap.utils.toArray('.main-nav a');
@@ -160,6 +253,7 @@ function initNavigation() {
         })
     });
 
+    /** NAV ANIMATION (direction) **/
     function navAnimation(direction) {
         //console.log(direction)
         const scrollingDown = direction === 1;
@@ -186,10 +280,14 @@ function initNavigation() {
     });
 }
 
+/**
+ * HEADER TILT EVENT FUNCTION
+ */
 function initHeaderTilt() {
     document.querySelector('header').addEventListener('mousemove', moveImages);
 }
 
+/**  MOVE IMAGES ANIMATION  **/
 function moveImages(e) {
     //console.log(e);
 
@@ -236,6 +334,10 @@ function moveImages(e) {
     })
 }
 
+
+/**
+ * HOVER COLUMNS REVEAL ANIMATION 
+ */
 function initHoverReveal() {
 
     sections.forEach(section => {
@@ -259,10 +361,12 @@ function initHoverReveal() {
     })
 }
 
+/** GET THE TEXT HEIGHT **/
 function getTextHeight(textCopy) {
     return textCopy.clientHeight;
 }
 
+/** COLUMNS REVEAL TIMELINE **/
 function createHoverReveal(e) {
     //console.log(e.type)
     const { imageBlock, image, mask, text, textCopy, textMask, textP } = e.target;
@@ -290,6 +394,10 @@ function createHoverReveal(e) {
     return tl;
 }
 
+/**
+ * PORTFOLIO HOVER ANIMATION
+ * => INIT
+ */
 function initPortfolioHover() {
     allLinks.forEach(link => {
         link.addEventListener('mouseenter', createPortfolioHover);
@@ -297,7 +405,7 @@ function initPortfolioHover() {
         link.addEventListener('mousemove', createPortfolioMove);
     })
 }
-
+/** => CREATE HOVER **/
 function createPortfolioHover(e) {
     /**  Change images to the right urls
      *  Fade in images
@@ -331,7 +439,7 @@ function createPortfolioHover(e) {
 
     }
 }
-
+/** => CREATE MOVE **/
 function createPortfolioMove(e) {
 
     const { clientY } = e;
@@ -351,12 +459,17 @@ function createPortfolioMove(e) {
     });
 }
 
+/** GET THE PORTFOLIO HEIGHT **/
 function getPortfolioOffset(clientY) {
     const heightSection = (document.querySelector('.portfolio__categories').clientHeight) / 6;
 
     return -(heightSection - clientY);
 }
 
+
+/**
+ * PARALLAX ANIMATION
+ */
 function initParallax() {
     /**  Select all sections .with-parallax  **/
     gsap.utils.toArray('.with-parallax').forEach(section => {
@@ -377,6 +490,7 @@ function initParallax() {
 
 }
 
+/** PIN FIXED NAV & UPDATE BGC **/
 function initPinSteps() {
 
     ScrollTrigger.create({
@@ -420,6 +534,7 @@ function initPinSteps() {
     });
 }
 
+/** LINKS FIXED NAV SCROLL TO **/
 function initScrollTo() {
 
     /** Find all links and animate  **/
@@ -443,7 +558,9 @@ function initScrollTo() {
 
 
 
-/**  Init Function  **/
+/**
+ * MAIN INIT FUNCTION
+ */
 function init() {
     //initLoader();
     initSmoothScrollbar();
@@ -456,7 +573,7 @@ function init() {
     initScrollTo();
 }
 
-/**  Window Event Load  **/
+/**  WNDOW EVENT LOAD **/
 window.addEventListener('load', function () {
     init();
 });
@@ -464,13 +581,10 @@ window.addEventListener('load', function () {
 
 
 
-/** Define Breakpoints **/
+/** DEFINE BREAKPOINTS **/
 const mq = window.matchMedia("(min-width: 768px)");
-/**  Change add listener to the breakpoint  **/
-mq.addListener(handleWidthChange);
 
-handleWidthChange(mq)
-
+/** RESET PROPS **/
 function resetProps(el) {
     //console.log(el);
     /** Kill all Tweens  **/
@@ -483,7 +597,7 @@ function resetProps(el) {
     }
 }
 
-/** Media Query Change  **/
+/** MEDIA QUERIY CHANGE **/
 function handleWidthChange(mq) {
 
     /** if breakpoint match  **/
@@ -503,3 +617,9 @@ function handleWidthChange(mq) {
         });
     }
 };
+
+handleWidthChange(mq)
+
+/** CHANGE ADD LISTENER TO THE BREAKPOINT **/
+mq.addListener(handleWidthChange);
+
